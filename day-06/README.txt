@@ -1,4 +1,3 @@
-/*
 --- Day 6: Universal Orbit Map ---
 
 You've landed at the Universal Orbit Map facility on Mercury. Because navigation in space often involves transferring between orbits, the orbit maps here are useful for finding efficient routes between, for example, you and Santa. You download a map of the local orbits (your puzzle input).
@@ -50,48 +49,50 @@ COM orbits nothing.
 The total number of direct and indirect orbits in this example is 42.
 
 What is the total number of direct and indirect orbits in your map data?
-*/
 
-const fs = require('fs');
+--- Part Two ---
 
-const numberOfOrbits = (spaceObject, spaceMap, depth) => {
+Now, you just need to figure out how many orbital transfers you (YOU) need to take to get to Santa (SAN).
 
-  if (!spaceMap[spaceObject]) {
-    return depth;
-  }
+You start at the object YOU are orbiting; your destination is the object SAN is orbiting. An orbital transfer lets you move from any object to an object orbiting or orbited by that object.
 
-  return depth + spaceMap[spaceObject].map( (orbit) => numberOfOrbits(orbit, spaceMap, depth + 1) ).reduce( (acc, v) => acc + v)
-}
+For example, suppose you have the following map:
 
-// fs.readFile('./input01', "utf8", (err, data) => {
-//   if (err) throw err;
+COM)B
+B)C
+C)D
+D)E
+E)F
+B)G
+G)H
+D)I
+E)J
+J)K
+K)L
+K)YOU
+I)SAN
+Visually, the above map of orbits looks like this:
 
-//   let spaceMap = {};
+                          YOU
+                         /
+        G - H       J - K - L
+       /           /
+COM - B - C - D - E - F
+               \
+                I - SAN
+In this example, YOU are in orbit around K, and SAN is in orbit around I. To move from K to I, a minimum of 4 orbital transfers are required:
 
-//   data.split("\n").map(n => n.split(")")).forEach( (orbit) => {
-//     if (!spaceMap[orbit[0]]) {
-//       spaceMap[orbit[0]] = [orbit[1]];
-//     } else {
-//       spaceMap[orbit[0]].push(orbit[1]);
-//     }
-//   });
+K to J
+J to E
+E to D
+D to I
+Afterward, the map of orbits looks like this:
 
-//   console.log(numberOfOrbits('COM', spaceMap, 0));
-// });
-
-fs.readFile('./input', "utf8", (err, data) => {
-  if (err) throw err;
-
-  let spaceMap = {};
-
-  data.split("\n").map(n => n.split(")")).forEach( (orbit) => {
-    if (!spaceMap[orbit[0]]) {
-      spaceMap[orbit[0]] = [orbit[1]];
-    } else {
-      spaceMap[orbit[0]].push(orbit[1]);
-    }
-  });
-
-  console.log(numberOfOrbits('COM', spaceMap, 0));
-});
-
+        G - H       J - K - L
+       /           /
+COM - B - C - D - E - F
+               \
+                I - SAN
+                 \
+                  YOU
+What is the minimum number of orbital transfers required to move from the object YOU are orbiting to the object SAN is orbiting? (Between the objects they are orbiting - not between YOU and SAN.)
